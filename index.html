@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auguri Gigi!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        .music-note {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 2em;
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+    </style>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin: 0 0 20px 0;
+            animation: bounce 1s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .shield {
+            font-size: 5em;
+            margin: 20px 0;
+            animation: rotate 3s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .message {
+            font-size: 1.3em;
+            color: #333;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .button:hover {
+            transform: scale(1.1);
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: fall 3s linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .joke {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-style: italic;
+            display: none;
+        }
+        
+        .joke.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="music-note">🎵</div>
+    
+    <div class="container">
+        <h1>🎉 AUGURI GIGI! 🎉</h1>
+        <div class="shield">🛡️</div>
+        
+        <div class="message">
+            Con te, ogni giorno è <span class="highlight">assicurato</span> al 100%!<br>
+            Sei la <span class="highlight">polizza migliore</span> contro la noia,<br>
+            il <span class="highlight">premio perfetto</span> per chi ti conosce,<br>
+            e non c'è <span class="highlight">franchigia</span> alla tua simpatia!
+        </div>
+        
+        <button class="button" onclick="mostraBarzelletta()">
+            Clicca per una sorpresa assicurata! 😄
+        </button>
+        
+        <div class="joke" id="joke">
+            <strong>Perché Gigi è l'assicuratore migliore?</strong><br><br>
+            Perché con lui sei coperto anche dal rischio di annoiarti! 😂<br><br>
+            E ricorda: l'amicizia con Gigi non ha scadenza! 🎊
+        </div>
+    </div>
+    
+    <script>
+        // Audio Context per generare i suoni
+        let audioContext;
+        let isPlaying = false;
+        
+        // Frequenze delle note (in Hz)
+        const notes = {
+            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 
+            'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 
+            'A#4': 466.16, 'C5': 523.25
+        };
+        
+        // Melodia Happy Birthday (nota, durata in secondi)
+        const melody = [
+            ['C4', 0.25], ['C4', 0.25], ['D4', 0.5], ['C4', 0.5], ['F4', 0.5], ['E4', 1],
+            ['C4', 0.25], ['C4', 0.25], ['D4', 0.5], ['C4', 0.5], ['G4', 0.5], ['F4', 1],
+            ['C4', 0.25], ['C4', 0.25], ['C5', 0.5], ['A4', 0.5], ['F4', 0.5], ['E4', 0.5], ['D4', 1],
+            ['A#4', 0.25], ['A#4', 0.25], ['A4', 0.5], ['F4', 0.5], ['G4', 0.5], ['F4', 1]
+        ];
+        
+        function playNote(frequency, duration, startTime) {
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+            
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration);
+        }
+        
+        function playMelody() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            let currentTime = audioContext.currentTime;
+            
+            melody.forEach(([note, duration]) => {
+                playNote(notes[note], duration, currentTime);
+                currentTime += duration;
+            });
+            
+            // Ripeti la melodia dopo che finisce
+            setTimeout(playMelody, currentTime * 1000 - audioContext.currentTime * 1000 + 1000);
+        }
+        
+        // Avvia automaticamente quando l'utente interagisce con la pagina
+        document.addEventListener('click', function initAudio() {
+            if (!isPlaying) {
+                playMelody();
+                isPlaying = true;
+                document.removeEventListener('click', initAudio);
+            }
+        }, { once: true });
+        
+        function mostraBarzelletta() {
+            const joke = document.getElementById('joke');
+            joke.classList.toggle('show');
+            creaConfetti();
+        }
+        
+        function creaConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            for(let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetto = document.createElement('div');
+                    confetto.className = 'confetti';
+                    confetto.style.left = Math.random() * 100 + '%';
+                    confetto.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetto.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(confetto);
+                    
+                    setTimeout(() => confetto.remove(), 3000);
+                }, i * 30);
+            }
+        }
+        
+        // Animazione iniziale
+        window.onload = () => {
+            setTimeout(creaConfetti, 500);
+        };
+    </script>
+</body>
+</html>
