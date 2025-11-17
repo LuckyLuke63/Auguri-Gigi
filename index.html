@@ -208,21 +208,30 @@
             oscillator.stop(startTime + duration);
         }
         
-        function playMelody() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            let currentTime = audioContext.currentTime;
-            
-            melody.forEach(([note, duration]) => {
-                playNote(notes[note], duration, currentTime);
-                currentTime += duration;
-            });
-            
-            // Ripeti la melodia dopo che finisce
-            // setTimeout(playMelody, currentTime * 1000 - audioContext.currentTime * 1000 + 1000);
-        }
+        function playMelody(remainingPlays = 3) { // Imposta 3 come default, ad esempio
+    if (remainingPlays <= 0) {
+        // Se non ci sono più ripetizioni rimanenti, esci dalla funzione.
+        console.log("Melodia terminata.");
+        return; 
+    }
+
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    let currentTime = audioContext.currentTime;
+    
+    melody.forEach(([note, duration]) => {
+        playNote(notes[note], duration, currentTime);
+        currentTime += duration;
+    });
+    
+    // Ripeti la melodia, decrementando il contatore per la prossima chiamata
+    setTimeout(() => {
+        // Usa una funzione anonima per passare il parametro aggiornato
+        playMelody(remainingPlays - 1); 
+    }, currentTime * 1000 - audioContext.currentTime * 1000 + 1000);
+}
         
         // Avvia automaticamente quando l'utente interagisce con la pagina
         document.addEventListener('click', function initAudio() {
