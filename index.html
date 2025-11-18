@@ -212,12 +212,13 @@
             'A#4': 466.16, 'C5': 523.25
         };
         
-        // Melodia Happy Birthday (nota, durata in secondi)
+
+        // Melodia Happy Birthday (nota, durata in secondi) - versione più vivace
         const melody = [
-            ['C4', 0.25], ['C4', 0.25], ['D4', 0.5], ['C4', 0.5], ['F4', 0.5], ['E4', 1],
-            ['C4', 0.25], ['C4', 0.25], ['D4', 0.5], ['C4', 0.5], ['G4', 0.5], ['F4', 1],
-            ['C4', 0.25], ['C4', 0.25], ['C5', 0.5], ['A4', 0.5], ['F4', 0.5], ['E4', 0.5], ['D4', 1],
-            ['A#4', 0.25], ['A#4', 0.25], ['A4', 0.5], ['F4', 0.5], ['G4', 0.5], ['F4', 1]
+            ['C4', 0.2], ['C4', 0.2], ['D4', 0.4], ['C4', 0.4], ['F4', 0.4], ['E4', 0.8],
+            ['C4', 0.2], ['C4', 0.2], ['D4', 0.4], ['C4', 0.4], ['G4', 0.4], ['F4', 0.8],
+            ['C4', 0.2], ['C4', 0.2], ['C5', 0.4], ['A4', 0.4], ['F4', 0.4], ['E4', 0.4], ['D4', 0.8],
+            ['A#4', 0.2], ['A#4', 0.2], ['A4', 0.4], ['F4', 0.4], ['G4', 0.4], ['F4', 0.8]
         ];
         
         function playNote(frequency, duration, startTime) {
@@ -230,9 +231,9 @@
             gainNode.connect(audioContext.destination);
             
             oscillator.frequency.value = frequency;
-            oscillator.type = 'sine';
+            oscillator.type = 'square';
             
-            gainNode.gain.setValueAtTime(0.3, startTime);
+            gainNode.gain.setValueAtTime(0.5, startTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
             
             oscillator.start(startTime);
