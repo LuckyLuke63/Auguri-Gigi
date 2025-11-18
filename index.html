@@ -11,10 +11,11 @@
     <style>
         .music-note {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 2em;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1.5em;
             animation: pulse 1s ease-in-out infinite;
+            z-index: 1000;
         }
         
         @keyframes pulse {
@@ -23,36 +24,40 @@
         }
     </style>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             margin: 0;
-            padding: 0;
+            padding: 10px;
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            align-items: flex-start;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         
         .container {
             background: white;
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 90%;
-            width: 100%;                 /* Aggiungi questo */
-            box-sizing: border-box;      /* Aggiungi questo */
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px 15px;
+            max-width: 95%;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             text-align: center;
             position: relative;
             animation: slideIn 0.8s ease-out;
-            margin: 20px;                /* Aggiungi margine per sicurezza */
-            max-height: 90vh;           /* Limita altezza massima */
+            margin: 10px auto;
         }
         
         @keyframes slideIn {
             from {
-                transform: translateY(-50px);
+                transform: translateY(-30px);
                 opacity: 0;
             }
             to {
@@ -63,19 +68,19 @@
         
         h1 {
             color: #667eea;
-            font-size: 3em;
-            margin: 0 0 20px 0;
+            font-size: 2em;
+            margin: 0 0 10px 0;
             animation: bounce 1s ease infinite;
         }
         
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
         
         .shield {
-            font-size: 5em;
-            margin: 20px 0;
+            font-size: 3.5em;
+            margin: 10px 0;
             animation: rotate 3s linear infinite;
         }
         
@@ -85,10 +90,10 @@
         }
         
         .message {
-            font-size: 1.3em;
+            font-size: 1.1em;
             color: #333;
-            line-height: 1.6;
-            margin: 20px 0;
+            line-height: 1.4;
+            margin: 15px 0;
         }
         
         .highlight {
@@ -100,24 +105,25 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.2em;
+            padding: 12px 30px;
+            font-size: 1.1em;
             border-radius: 50px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 15px;
             transition: transform 0.3s;
+            width: 100%;
+            max-width: 300px;
         }
         
         .button:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         .confetti {
             position: fixed;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background: #f0f;
-            position: absolute;
             animation: fall 3s linear infinite;
         }
         
@@ -130,11 +136,12 @@
         
         .joke {
             background: #f0f0f0;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 15px;
             font-style: italic;
             display: none;
+            font-size: 0.95em;
         }
         
         .joke.show {
@@ -145,6 +152,26 @@
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        
+        /* Media query per schermi molto piccoli */
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .shield {
+                font-size: 3em;
+            }
+            
+            .message {
+                font-size: 1em;
+            }
+            
+            .button {
+                font-size: 1em;
+                padding: 10px 25px;
+            }
         }
     </style>
 </head>
@@ -212,30 +239,27 @@
             oscillator.stop(startTime + duration);
         }
         
-        function playMelody(remainingPlays = 3) { // Imposta 3 come default, ad esempio
-    if (remainingPlays <= 0) {
-        // Se non ci sono più ripetizioni rimanenti, esci dalla funzione.
-        console.log("Melodia terminata.");
-        return; 
-    }
+        function playMelody(remainingPlays = 3) {
+            if (remainingPlays <= 0) {
+                console.log("Melodia terminata.");
+                return; 
+            }
 
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    
-    let currentTime = audioContext.currentTime;
-    
-    melody.forEach(([note, duration]) => {
-        playNote(notes[note], duration, currentTime);
-        currentTime += duration;
-    });
-    
-    // Ripeti la melodia, decrementando il contatore per la prossima chiamata
-    setTimeout(() => {
-        // Usa una funzione anonima per passare il parametro aggiornato
-        playMelody(remainingPlays - 1); 
-    }, currentTime * 1000 - audioContext.currentTime * 1000 + 1000);
-}
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            let currentTime = audioContext.currentTime;
+            
+            melody.forEach(([note, duration]) => {
+                playNote(notes[note], duration, currentTime);
+                currentTime += duration;
+            });
+            
+            setTimeout(() => {
+                playMelody(remainingPlays - 1); 
+            }, currentTime * 1000 - audioContext.currentTime * 1000 + 1000);
+        }
         
         // Avvia automaticamente quando l'utente interagisce con la pagina
         document.addEventListener('click', function initAudio() {
@@ -250,11 +274,16 @@
             const joke = document.getElementById('joke');
             joke.classList.toggle('show');
             creaConfetti();
+            
+            // Scroll smooth verso il basso per mostrare tutto il contenuto
+            setTimeout(() => {
+                joke.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         }
         
         function creaConfetti() {
             const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-            for(let i = 0; i < 50; i++) {
+            for(let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     const confetto = document.createElement('div');
                     confetto.className = 'confetti';
