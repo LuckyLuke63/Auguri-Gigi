@@ -233,7 +233,7 @@
             oscillator.frequency.value = frequency;
             oscillator.type = 'square';
             
-            gainNode.gain.setValueAtTime(0.5, startTime);
+            gainNode.gain.setValueAtTime(0.4, startTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
             
             oscillator.start(startTime);
